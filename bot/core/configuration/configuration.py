@@ -12,9 +12,9 @@ class Configuration:
         return parser.get('database', 'connection')
 
     @staticmethod
-    async def bot_token() -> str:
+    def bot_token() -> str:
         return parser.get('bot', 'token')
 
     @staticmethod
-    async def available_languages() -> list:
+    def available_languages() -> list:
         return ast.literal_eval(parser.get('languages', 'available'))

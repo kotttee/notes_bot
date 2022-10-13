@@ -8,6 +8,8 @@ from bot.core.configuration import Configuration
 from bot.core.user import User
 
 
+# several middlewares doing the same function are made in order to mitigate changes in their work in the future
+
 class TranslatorRunnerMiddleware(BaseMiddleware):
     async def __call__(
             self,
@@ -21,13 +23,13 @@ class TranslatorRunnerMiddleware(BaseMiddleware):
             if user.language is None:
                 data['_i18n'] = hub.get_translator_by_locale(
                     event.from_user.language_code
-                    if event.from_user.language_code in await Configuration.available_languages() else 'en')
+                    if event.from_user.language_code in Configuration.available_languages() else 'en')
 
                 user.language = event.from_user.language_code \
-                    if event.from_user.language_code in await Configuration.available_languages() else 'en'
+                    if event.from_user.language_code in Configuration.available_languages() else 'en'
         else:
             data['_i18n'] = hub.get_translator_by_locale(
-                    user.language if user.language in await Configuration.available_languages() else 'en')
+                user.language if user.language in Configuration.available_languages() else 'en')
         return await handler(event, data)
 
 
@@ -44,11 +46,11 @@ class TranslatorRunnerCallbackMiddleware(BaseMiddleware):
             if user.language is None:
                 data['_i18n'] = hub.get_translator_by_locale(
                     event.from_user.language_code
-                    if event.from_user.language_code in await Configuration.available_languages() else 'en')
+                    if event.from_user.language_code in Configuration.available_languages() else 'en')
 
                 user.language = event.from_user.language_code \
-                    if event.from_user.language_code in await Configuration.available_languages() else 'en'
+                    if event.from_user.language_code in Configuration.available_languages() else 'en'
         else:
             data['_i18n'] = hub.get_translator_by_locale(
-                    user.language if user.language in await Configuration.available_languages() else 'en')
+                user.language if user.language in Configuration.available_languages() else 'en')
         return await handler(event, data)
