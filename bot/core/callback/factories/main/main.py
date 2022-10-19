@@ -24,7 +24,7 @@ class MainCallbackFactory(CallbackData, prefix="main_callback"):
     @staticmethod
     async def get_settings_language_keyboard_fab() -> InlineKeyboardMarkup:
         builder = InlineKeyboardBuilder()
-        for lang in await Configuration.available_languages():
+        for lang in Configuration.available_languages():
             builder.button(
                 text=lang,
                 callback_data=MainCallbackFactory(action="change_language", value=lang)

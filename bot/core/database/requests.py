@@ -12,3 +12,17 @@ async def update_user_request(user: dict, users_collection: AsyncIOMotorCollecti
         await users_collection.replace_one(dict(_id=old_user['_id']), user)
     else:
         await users_collection.insert_one(user)
+
+
+async def get_note_request(note_id: int, notes_collection: AsyncIOMotorCollection) -> dict | None:
+    note = await notes_collection.find_one(dict(note_id=note_id))
+    return note
+
+
+async def update_note_request(note_id: int, text: str, date: float, notes_collection: AsyncIOMotorCollection) -> None:
+    old_note = await notes_collection.find_one(dict(note_id=note_id))
+    if old_note:
+        await notes_collection.replace_one(dict(_id=old_note['_id']), dict(note_id=note_id,
+                                                                           text=text, date=date))
+    else:
+        await notes_collection.insert_one(dict(note_id=note_id, text=text, date=date))

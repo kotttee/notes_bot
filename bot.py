@@ -31,7 +31,7 @@ async def main():
     dp.my_chat_member.middleware(IncludeUserMyChatMemberMiddleware())
     # OTHER
     queue = asyncio.Queue()
-    translator_hub = await build_translator_hub(await Configuration.available_languages())
+    translator_hub = await build_translator_hub(Configuration.available_languages())
 
     # START
     await dp.start_polling(bot, _translator_hub=translator_hub, _run=queue.put, _db=database)

@@ -6,7 +6,7 @@ from bot.core.callback import MainCallbackFactory as MainCbFac
 from bot.core.user import User
 from bot.core.commands import MainCommands
 from aiogram import F
-
+from aiogram.fsm.context import FSMContext
 
 main_router = Router()
 
@@ -32,6 +32,12 @@ async def process_menu_command(message: Message, _i18n: TranslatorRunner, _user:
 async def handle_block(event: ChatMemberUpdated, _user: User):
     _user.active = False
     await _user.commit()
+
+
+@main_router.message(F.text == '⛔.')
+async def get_settings(message: Message, state: FSMContext, _i18n: TranslatorRunner, _user: User):
+    await state.clear()
+    await message.answer(_i18n.main.menu(), reply_markup= await MainCbFac.get_menu_keyboard_fab(_user.language))
 
 
 @main_router.my_chat_member(ChatMemberUpdatedFilter(IS_NOT_MEMBER >> IS_MEMBER))

@@ -12,3 +12,9 @@ main-my-menu =
     📖. - watch notes
     📝. - edit my note
     ⚙. - settings
+
+main-my-write_note = please write the note
+main-my-write_note_done = done!
+
+
+main-my-check_error-contains_forbidden_words = sorry but your note contains provocative/forbidden words, please write again

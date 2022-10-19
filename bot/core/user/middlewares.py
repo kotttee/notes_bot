@@ -14,7 +14,6 @@ class IncludeUserMiddleware(BaseMiddleware):
             event: Message,
             data: Dict[str, Any]
     ) -> Any:
-
         data['_user'] = await UserManager.get_user(event.from_user.id, data['_db'])
         return await handler(event, data)
 

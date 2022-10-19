@@ -14,3 +14,10 @@ class MyCallbackFactory(CallbackData, prefix="main_callback"):
         for k, v in eval(lang_code)['my_menu'].items():
             builder.button(text=v)
         return builder.as_markup(resize_keyboard=True)
+
+    @staticmethod
+    async def get_cancel_keyboard_fab() -> ReplyKeyboardMarkup:
+        builder = ReplyKeyboardBuilder()
+        builder.button(
+            text='⛔.',)
+        return builder.as_markup(resize_keyboard=True)

@@ -41,7 +41,7 @@ async def get_settings(callback: CallbackQuery, callback_data: MainCbFac, _i18n:
 @settings_router.callback_query(MainCbFac.filter(F.action == "change_language"))
 async def change_language(callback: CallbackQuery, callback_data: MainCbFac, _translator_hub: TranslatorHub,
                           _user: User, bot: Bot):
-    if callback_data.value not in await Configuration.available_languages():
+    if callback_data.value not in Configuration.available_languages():
         await callback.answer(
             text='sorry this language is not available right now, maybe we are having problems with the translation',
             show_alert=True)
