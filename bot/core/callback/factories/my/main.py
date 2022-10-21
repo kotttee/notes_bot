@@ -21,3 +21,12 @@ class MyCallbackFactory(CallbackData, prefix="main_callback"):
         builder.button(
             text='⛔.',)
         return builder.as_markup(resize_keyboard=True)
+
+    @staticmethod
+    async def rate_note_factory() -> ReplyKeyboardMarkup:
+        builder = ReplyKeyboardBuilder()
+        builder.button(
+            text='😾.',)
+        builder.button(
+            text='⛔.',)
+        return builder.as_markup(resize_keyboard=True)

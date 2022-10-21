@@ -36,7 +36,8 @@ async def handle_block(event: ChatMemberUpdated, _user: User):
 
 @main_router.message(F.text == '⛔.')
 async def get_settings(message: Message, state: FSMContext, _i18n: TranslatorRunner, _user: User):
-    await state.clear()
+    if state:
+        await state.clear()
     await message.answer(_i18n.main.menu(), reply_markup= await MainCbFac.get_menu_keyboard_fab(_user.language))
 
 

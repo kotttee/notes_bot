@@ -1,7 +1,7 @@
 import datetime
 
 from motor.motor_asyncio import AsyncIOMotorClient
-from .requests import get_user_request, update_user_request, update_note_request
+from .requests import *
 
 
 class Database:
@@ -13,14 +13,23 @@ class Database:
 
     async def save_user(self, user: dict) -> None:
         """the dictionary should contain information about the instance of the User class"""
-        if "_User__database" in user.keys():
-            user.pop("_User__database")
         await update_user_request(user, self.database.users)
 
-    async def get_note(self, note_id: int) -> None:
+    async def get_note(self, note_id: int) -> None | dict:
         """the story_id should be the same as a chat_id"""
-        await get_note_request(note_id, text, datetime.datetime.now().timestamp(), self.database.notes)
+        return await get_note_request(note_id, self.database.notes)
 
-    async def save_note(self, note_id: int, text: str) -> None:
+    async def save_note(self, data: dict) -> None:
         """the story_id should be the same as a chat_id"""
-        await update_note_request(note_id, text, datetime.datetime.now().timestamp(), self.database.notes)
+        await update_note_request(data, self.database.notes)
+
+    async def get_notes_filtered(self, note_filter: dict):
+        skip = []
+        while True:
+            note = await get_note_filtered_request(note_filter, skip, self.database.notes)
+            if not note:
+                break
+            else:
+                yield note
+                skip.append(note['note_id'])
+
