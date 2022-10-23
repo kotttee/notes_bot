@@ -3,8 +3,12 @@
 uk = {
     'settings': {
         'language': 'language',
-        'cancel': 'скасувати'
-
+        'loop_notes': 'зациклити нотатки',
+        'cancel': '⛔'
+    },
+    'settings_loop_notes': {
+        'true': 'так',
+        'false': 'ні'
     },
     'menu': {
         'watch_notes': '📖.',
@@ -17,7 +21,12 @@ uk = {
 ru = {
     'settings': {
         'language': 'language',
-        'cancel': 'отменить'
+        'loop_notes': 'зациклить заметки',
+        'cancel': '⛔'
+    },
+    'settings_loop_notes': {
+        'true': 'да',
+        'false': 'нет'
     },
     'menu': {
         'watch_notes': '📖.',
@@ -31,7 +40,12 @@ ru = {
 en = {
     'settings': {
         'language': 'language',
-        'cancel': 'cancel'
+        'loop_notes': 'loop notes',
+        'cancel': '⛔'
+    },
+    'settings_loop_notes': {
+        'true': 'yes',
+        'false': 'no'
     },
     'menu': {
         'watch_notes': '📖.',

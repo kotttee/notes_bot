@@ -1,6 +1,7 @@
 main-greeting = Hello
 main-settings = settings...
 main-settings-language = please select a language...
+main-settings-loop_notes = should I show notes you've already seen?
 main-menu =
     you are in the main menu
     📖. - watch notes

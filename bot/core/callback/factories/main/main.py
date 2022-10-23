@@ -18,7 +18,7 @@ class MainCallbackFactory(CallbackData, prefix="main_callback"):
                 text=v,
                 callback_data=MainCallbackFactory(action="get_settings", value=k)
             )
-        builder.adjust()
+        builder.adjust(2)
         return builder.as_markup()
 
     @staticmethod
@@ -29,6 +29,25 @@ class MainCallbackFactory(CallbackData, prefix="main_callback"):
                 text=lang,
                 callback_data=MainCallbackFactory(action="change_language", value=lang)
             )
+        builder.button(
+            text='⛔',
+            callback_data=MainCallbackFactory(action='get_settings', value='cancel')
+        )
+        return builder.as_markup()
+
+    @staticmethod
+    async def get_settings_loop_notes_keyboard_fab(lang_code: str) -> InlineKeyboardMarkup:
+        builder = InlineKeyboardBuilder()
+        for k, v in eval(lang_code)['settings_loop_notes'].items():
+            builder.button(
+                text=v,
+                callback_data=MainCallbackFactory(action="loop_notes", value=k)
+            )
+        builder.button(
+            text='⛔',
+            callback_data=MainCallbackFactory(action='get_settings', value='cancel')
+        )
+        builder.adjust()
         return builder.as_markup()
 
     @staticmethod

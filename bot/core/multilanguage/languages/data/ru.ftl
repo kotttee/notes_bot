@@ -1,6 +1,7 @@
 main-greeting = Привет
 main-settings = настройки...
 main-settings-language = please select a language...
+main-settings-loop_notes = стоит ли мне показывать заметки которые ты уже видел?
 main-menu =
     ты в главном меню
     📖. - смотреть заметки

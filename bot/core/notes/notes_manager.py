@@ -1,9 +1,11 @@
+import asyncio
+
 from bot.core.database import Database
 import re
 from bot import core
 from .note import Note, EmptyNote
-
 forbidden_words = ['блять', 'сука']
+
 
 class NotesManager:
 
@@ -28,11 +30,21 @@ class NotesManager:
     @staticmethod
     async def get_note(user, database: Database) -> Note | None:
         note = None
-        async for i in database.get_notes_filtered({'language': user.language}):
+        async for i, skip in database.get_notes_filtered({'language': user.language}, user.loop_notes, user.looped_notes_skips):
             # here will be more filters soon
-            if user.user_id not in i['showed']:
-                note = Note(i['text'], i['note_id'], i['date'], i['language'], i['showed'], database)
-                note.showed.append(user.user_id)
-                await note.commit()
+            if user.user_id == i['note_id']:
+                skip.append(i['note_id'])
+                continue
+            if not user.loop_notes:
+                if user.user_id in i['showed']:
+                    skip.append(i['note_id'])
+                    continue
+            if user.loop_notes:
+                if i['note_id'] in skip:
+                    continue
+            note = Note(i['text'], i['note_id'], i['date'], i['language'], i['showed'], database)
+            note.showed.append(user.user_id)
+            await note.commit()
+            skip.append(i['note_id'])
             break
         return note

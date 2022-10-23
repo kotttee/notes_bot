@@ -23,13 +23,15 @@ class Database:
         """the story_id should be the same as a chat_id"""
         await update_note_request(data, self.database.notes)
 
-    async def get_notes_filtered(self, note_filter: dict):
-        skip = []
+    async def get_notes_filtered(self, note_filter: dict, loop_notes: bool, skip: list):
         while True:
             note = await get_note_filtered_request(note_filter, skip, self.database.notes)
             if not note:
+                if loop_notes:
+                    skip.clear()
+                    continue
                 break
             else:
-                yield note
-                skip.append(note['note_id'])
+                yield note, skip
+
 

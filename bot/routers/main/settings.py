@@ -1,14 +1,15 @@
-from aiogram import Router, Bot
-from aiogram.types import Message, CallbackQuery, BotCommandScopeChat
-from aiogram.filters import Command
-from fluentogram import TranslatorRunner, TranslatorHub
-from bot.core.callback import MainCallbackFactory as MainCbFac
-from bot.core.user import User
-from bot.core.configuration import Configuration
-from bot.core.commands import MainCommands
-from aiogram import F
 from contextlib import suppress
+
+from aiogram import F
+from aiogram import Router, Bot
 from aiogram.exceptions import TelegramBadRequest
+from aiogram.filters import Command
+from aiogram.types import Message, CallbackQuery
+from fluentogram import TranslatorRunner, TranslatorHub
+
+from bot.core.callback import MainCallbackFactory as MainCbFac
+from bot.core.configuration import Configuration
+from bot.core.user import User
 
 settings_router = Router()
 
@@ -30,7 +31,11 @@ async def get_settings(callback: CallbackQuery, callback_data: MainCbFac, _i18n:
         case 'language':
             await callback.message.answer(_i18n.main.settings.language(),
                                           reply_markup=await MainCbFac.get_settings_language_keyboard_fab())
-    match callback_data.value:
+        case 'loop_notes':
+            await callback.message.answer(_i18n.main.settings.loop_notes(),
+                                          reply_markup=await MainCbFac.get_settings_loop_notes_keyboard_fab(
+                                              _user.language))
+
         case 'cancel':
             pass
     with suppress(TelegramBadRequest):
@@ -49,11 +54,16 @@ async def change_language(callback: CallbackQuery, callback_data: MainCbFac, _tr
         _user.language = callback_data.value
         await _user.commit()
     _i18n = _translator_hub.get_translator_by_locale(_user.language)
-    await callback.message.answer(_i18n.main.menu(), reply_markup= await MainCbFac.get_menu_keyboard_fab(_user.language))
+    await callback.message.answer(_i18n.main.menu(), reply_markup=await MainCbFac.get_menu_keyboard_fab(_user.language))
     with suppress(TelegramBadRequest):
         await bot.delete_message(callback.message.chat.id, callback.message.message_id)
 
-    await bot.set_my_commands(await MainCommands.get_default_commands(_user.language),
-                              BotCommandScopeChat(chat_id=_user.user_id),
-                              _user.language)
 
+@settings_router.callback_query(MainCbFac.filter(F.action == "loop_notes"))
+async def change_loop_notes(callback: CallbackQuery, callback_data: MainCbFac, _i18n: TranslatorRunner,
+                            _user: User, bot: Bot):
+    _user.loop_notes = True if callback_data.value == 'true' else False
+    await _user.commit()
+    await callback.message.answer(_i18n.main.menu(), reply_markup=await MainCbFac.get_menu_keyboard_fab(_user.language))
+    with suppress(TelegramBadRequest):
+        await bot.delete_message(callback.message.chat.id, callback.message.message_id)
