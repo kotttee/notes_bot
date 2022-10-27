@@ -7,6 +7,7 @@ from aiogram.filters import Command
 from aiogram.types import Message, CallbackQuery
 from fluentogram import TranslatorRunner, TranslatorHub
 from bot.core.fsm import ContactSupport
+from bot.core.callback import SettingsCallbackFactory as SettingsCbFac
 from bot.core.callback import MainCallbackFactory as MainCbFac
 from bot.core.configuration import Configuration
 from bot.core.user import User
@@ -18,22 +19,22 @@ settings_router = Router()
 @settings_router.message(F.text == '⚙.')
 async def process_settings_command(message: Message, _i18n: TranslatorRunner, _user: User, bot: Bot):
     await message.answer(_i18n.main.settings(),
-                         reply_markup=await MainCbFac.get_settings_keyboard_fab(_user.language))
+                         reply_markup=await SettingsCbFac.get_settings_keyboard_fab(_user.language))
 
     with suppress(TelegramBadRequest):
         await bot.delete_message(message.chat.id, message.message_id)
 
 
-@settings_router.callback_query(MainCbFac.filter(F.action == "get_settings"))
-async def get_settings(callback: CallbackQuery, callback_data: MainCbFac, _i18n: TranslatorRunner,
+@settings_router.callback_query(SettingsCbFac.filter(F.action == "get_settings"))
+async def get_settings(callback: CallbackQuery, callback_data: SettingsCbFac, _i18n: TranslatorRunner,
                        _user: User, bot: Bot, state: FSMContext):
     match callback_data.value:
         case 'language':
             await callback.message.answer(_i18n.main.settings.language(),
-                                          reply_markup=await MainCbFac.get_settings_language_keyboard_fab())
+                                          reply_markup=await SettingsCbFac.get_settings_language_keyboard_fab())
         case 'loop_notes':
             await callback.message.answer(_i18n.main.settings.loop_notes(),
-                                          reply_markup=await MainCbFac.get_settings_loop_notes_keyboard_fab(
+                                          reply_markup=await SettingsCbFac.get_settings_loop_notes_keyboard_fab(
                                               _user.language))
         case 'support':
             await state.set_state(ContactSupport.send_contact_message)
@@ -46,8 +47,8 @@ async def get_settings(callback: CallbackQuery, callback_data: MainCbFac, _i18n:
     await callback.answer()
 
 
-@settings_router.callback_query(MainCbFac.filter(F.action == "change_language"))
-async def change_language(callback: CallbackQuery, callback_data: MainCbFac, _translator_hub: TranslatorHub,
+@settings_router.callback_query(SettingsCbFac.filter(F.action == "change_language"))
+async def change_language(callback: CallbackQuery, callback_data: SettingsCbFac, _translator_hub: TranslatorHub,
                           _user: User, bot: Bot):
     if callback_data.value not in Configuration.available_languages():
         await callback.answer(
@@ -75,19 +76,20 @@ async def change_loop_notes(callback: CallbackQuery, callback_data: MainCbFac, _
 @settings_router.message(ContactSupport.send_contact_message)
 async def process_write_note_message_command(message: Message, _i18n: TranslatorRunner, _user: User,
                                              state: FSMContext, bot: Bot):
-        await bot.send_message(Configuration.support_chat_id(), "новое обращение в поддержку:\n" + message.text + '\nuser_id - ' + str(message.from_user.id),
-                               reply_markup= await MainCbFac.get_support_answer_fab(message.chat.id))
-        await state.clear()
-        await message.answer(_i18n.main.success() + "\n" + _i18n.main.menu(),
-                             reply_markup=await MainCbFac.get_menu_keyboard_fab(_user.language))
+    await bot.send_message(Configuration.support_chat_id(),
+                           "новое обращение в поддержку:\n" + message.text + '\nuser_id - ' + str(message.from_user.id),
+                           reply_markup=await SettingsCbFac.get_support_answer_fab(message.chat.id))
+    await state.clear()
+    await message.answer(_i18n.main.success() + "\n" + _i18n.main.menu(),
+                         reply_markup=await MainCbFac.get_menu_keyboard_fab(_user.language))
 
 
 @settings_router.callback_query(MainCbFac.filter(F.action == "answer_support"))
 async def answer_support(callback: CallbackQuery, callback_data: MainCbFac, _i18n: TranslatorRunner,
-                            _user: User, bot: Bot, state: FSMContext):
+                         _user: User, state: FSMContext):
     await state.set_state(ContactSupport.answer_from_support)
     await state.set_data({'answer_to_chat': callback_data.value})
-    await callback.answer('напиши пожалуйста ответ',  show_alert=True)
+    await callback.answer('напиши пожалуйста ответ', show_alert=True)
 
 
 @settings_router.message(ContactSupport.answer_from_support)

@@ -4,7 +4,7 @@ from bot.core.database import Database
 
 
 class Note:
-    def __init__(self, text: str, note_id: int, date: float, language : str, showed: list, database: Database) -> None:
+    def __init__(self, text: str, note_id: int, date: float, language: str, showed: list, database: Database) -> None:
         self.__database: Database = database
         self.note_id: int = note_id
         self.text: str = text

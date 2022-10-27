@@ -1,6 +1,5 @@
-import datetime
-
 from motor.motor_asyncio import AsyncIOMotorClient
+
 from .requests import *
 
 
@@ -35,5 +34,3 @@ class Database:
                 break
             else:
                 yield note, skip
-
-

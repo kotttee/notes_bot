@@ -54,31 +54,36 @@ async def process_show_note(message: Message, _i18n: TranslatorRunner, _user: Us
     note = await NotesManager.get_note(_user, _db)
     if note:
         await state.set_data({'read_note_id': note.note_id})
-        await message.answer(_i18n.main.my.watch_notes(), reply_markup=await MyCbFac.get_my_menu_keyboard_fab(_user.language))
+        await message.answer(_i18n.main.my.watch_notes(),
+                             reply_markup=await MyCbFac.get_my_menu_keyboard_fab(_user.language))
         await message.answer(note.text, reply_markup=await MyCbFac.rate_note_factory())
     else:
-        await message.answer(_i18n.main.my.no_notes(), reply_markup=await MyCbFac.get_my_menu_keyboard_fab(_user.language))
+        await message.answer(_i18n.main.my.no_notes(),
+                             reply_markup=await MyCbFac.get_my_menu_keyboard_fab(_user.language))
 
 
 @my_menu_router.message(F.text == '✏.')
-async def process_comment_note(message: Message, _i18n: TranslatorRunner, _user: User, _db: Database, state: FSMContext):
+async def process_comment_note(message: Message, _i18n: TranslatorRunner, _user: User, _db: Database,
+                               state: FSMContext):
     await state.set_state(ReadNotes.comment_note)
     await message.answer(_i18n.main.my.comment_note(), reply_markup=await MyCbFac.get_cancel_keyboard_fab())
 
 
 @my_menu_router.message(F.text == '😺.')
-async def process_show_note_next(message: Message, _i18n: TranslatorRunner, _user: User, _db: Database, state: FSMContext):
+async def process_show_note_next(message: Message, _i18n: TranslatorRunner, _user: User, _db: Database,
+                                 state: FSMContext):
     note = await NotesManager.get_note(_user, _db)
     if note:
         await state.set_data({'read_note_id': note.note_id})
         await message.answer(note.text, reply_markup=await MyCbFac.rate_note_factory())
     else:
-        await message.answer(_i18n.main.my.no_notes(), reply_markup=await MyCbFac.get_my_menu_keyboard_fab(_user.language))
+        await message.answer(_i18n.main.my.no_notes(),
+                             reply_markup=await MyCbFac.get_my_menu_keyboard_fab(_user.language))
 
 
 @my_menu_router.message(ReadNotes.comment_note)
 async def process_comment_note_message_command(message: Message, _i18n: TranslatorRunner, _user: User, _db: Database,
-                                             state: FSMContext, bot: Bot):
+                                               state: FSMContext, bot: Bot):
     state_data = await state.get_data()
     if 'read_note_id' in state_data.keys():
         status, desc = await NotesManager.check_comment(message.text)
@@ -86,7 +91,8 @@ async def process_comment_note_message_command(message: Message, _i18n: Translat
             with suppress(TelegramBadRequest):
                 await bot.send_message(state_data['read_note_id'],
                                        _i18n.main.my.someone_commented_note() + '\n' + message.text,
-                                       reply_markup= await MyCbFac.generate_answer_for_comment(_user.language, _user.user_id))
+                                       reply_markup=await MyCbFac.generate_answer_for_comment(_user.language,
+                                                                                              _user.user_id))
     await state.clear()
     await message.answer(_i18n.main.success())
     await process_show_note_next(message, _i18n, _user, _db, state)
@@ -94,10 +100,11 @@ async def process_comment_note_message_command(message: Message, _i18n: Translat
 
 @my_menu_router.callback_query(MyCbFac.filter(F.action == "answer_comment"))
 async def answer_to_comment_callback(callback: CallbackQuery, callback_data: MyCbFac, _i18n: TranslatorRunner,
-                            _user: User, bot: Bot, state: FSMContext):
+                                     _user: User, bot: Bot, state: FSMContext):
     await state.set_state(ReadNotes.answer_for_comment)
     await state.set_data({'answer_to_chat': callback_data.value})
-    await bot.send_message(callback.message.chat.id, _i18n.main.my.answer_to_comment(), reply_markup= await MyCbFac.get_cancel_keyboard_fab())
+    await bot.send_message(callback.message.chat.id, _i18n.main.my.answer_to_comment(),
+                           reply_markup=await MyCbFac.get_cancel_keyboard_fab())
     with suppress(TelegramBadRequest):
         await bot.edit_message_text(callback.message.text, callback.message.chat.id, callback.message.message_id)
     await callback.answer()
@@ -105,12 +112,14 @@ async def answer_to_comment_callback(callback: CallbackQuery, callback_data: MyC
 
 @my_menu_router.message(ReadNotes.answer_for_comment)
 async def process_reply_to_comment(message: Message, _i18n: TranslatorRunner, _user: User,
-                                             state: FSMContext, bot: Bot):
+                                   state: FSMContext, bot: Bot):
     state_data = await state.get_data()
     if 'answer_to_chat' in state_data.keys():
         status, desc = await NotesManager.check_comment(message.text)
         if status:
             with suppress(TelegramBadRequest):
-                await bot.send_message(state_data['answer_to_chat'],  _i18n.main.my.you_have_answer_to_comment() + '\n' + message.text,)
+                await bot.send_message(state_data['answer_to_chat'],
+                                       _i18n.main.my.you_have_answer_to_comment() + '\n' + message.text, )
     await state.clear()
-    await message.answer(_i18n.main.success() + '\n' + _i18n.main.menu(), reply_markup= await MainCbFac.get_menu_keyboard_fab(_user.language))
+    await message.answer(_i18n.main.success() + '\n' + _i18n.main.menu(),
+                         reply_markup=await MainCbFac.get_menu_keyboard_fab(_user.language))

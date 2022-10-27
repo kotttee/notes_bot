@@ -1,9 +1,8 @@
-import asyncio
+import re
 
 from bot.core.database import Database
-import re
-from bot import core
 from .note import Note, EmptyNote
+
 forbidden_words = ['блять', 'сука']
 
 

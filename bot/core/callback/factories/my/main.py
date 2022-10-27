@@ -1,7 +1,6 @@
 from aiogram.utils.keyboard import InlineKeyboardBuilder, InlineKeyboardMarkup, ReplyKeyboardBuilder, ReplyKeyboardMarkup
 from aiogram.filters.callback_data import CallbackData
 from .translations import *
-from bot.core.configuration import Configuration
 
 
 class MyCallbackFactory(CallbackData, prefix="main_callback"):

@@ -1,6 +1,5 @@
 from aiogram.types import BotCommand
 from .translations import *
-from bot.core.configuration import Configuration
 
 
 class MainCommands:
@@ -11,4 +10,3 @@ class MainCommands:
         for k, v in eval(lang_code)['default'].items():
             bot_commands.append(BotCommand(command=k, description=v))
         return bot_commands
-
