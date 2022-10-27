@@ -27,9 +27,10 @@ async def update_note_request(data: dict, notes_collection: AsyncIOMotorCollecti
         await notes_collection.insert_one(data)
 
 
-async def get_note_filtered_request(note_filter: dict, skip: list, notes_collection: AsyncIOMotorCollection) -> dict | None:
+async def get_note_filtered_request(note_filter: dict, skip: list, notes_collection: AsyncIOMotorCollection) -> dict | None | str:
+    note = 'empty'
     async for note in notes_collection.find(note_filter):
-        if note:
-            if note['note_id'] in skip:
+        if note['note_id'] in skip:
                 continue
         return note
+    return None if note != 'empty' else 'BREAK'

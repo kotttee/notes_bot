@@ -13,7 +13,7 @@ class MainCallbackFactory(CallbackData, prefix="main_callback"):
     @staticmethod
     async def get_settings_keyboard_fab(lang_code: str) -> InlineKeyboardMarkup:
         builder = InlineKeyboardBuilder()
-        for k, v in eval(lang_code)['settings'].items():
+        for k, v in globals()[lang_code]['settings'].items():
             builder.button(
                 text=v,
                 callback_data=MainCallbackFactory(action="get_settings", value=k)
@@ -38,7 +38,7 @@ class MainCallbackFactory(CallbackData, prefix="main_callback"):
     @staticmethod
     async def get_settings_loop_notes_keyboard_fab(lang_code: str) -> InlineKeyboardMarkup:
         builder = InlineKeyboardBuilder()
-        for k, v in eval(lang_code)['settings_loop_notes'].items():
+        for k, v in globals()[lang_code]['settings_loop_notes'].items():
             builder.button(
                 text=v,
                 callback_data=MainCallbackFactory(action="loop_notes", value=k)
@@ -53,6 +53,22 @@ class MainCallbackFactory(CallbackData, prefix="main_callback"):
     @staticmethod
     async def get_menu_keyboard_fab(lang_code: str) -> ReplyKeyboardMarkup:
         builder = ReplyKeyboardBuilder()
-        for k, v in eval(lang_code)['menu'].items():
+        for k, v in globals()[lang_code]['menu'].items():
             builder.button(text=v)
         return builder.as_markup(resize_keyboard=True)
+
+    @staticmethod
+    async def get_cancel_keyboard_fab() -> ReplyKeyboardMarkup:
+        builder = ReplyKeyboardBuilder()
+        builder.button(
+            text='⛔.',)
+        return builder.as_markup(resize_keyboard=True)
+
+    @staticmethod
+    async def get_support_answer_fab(chat_id: int) -> InlineKeyboardMarkup:
+        builder = InlineKeyboardBuilder()
+        builder.button(
+                text='ответить',
+                callback_data=MainCallbackFactory(action="answer_support", value=str(chat_id))
+            )
+        return builder.as_markup()

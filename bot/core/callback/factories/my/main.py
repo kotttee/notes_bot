@@ -11,7 +11,7 @@ class MyCallbackFactory(CallbackData, prefix="main_callback"):
     @staticmethod
     async def get_my_menu_keyboard_fab(lang_code: str) -> ReplyKeyboardMarkup:
         builder = ReplyKeyboardBuilder()
-        for k, v in eval(lang_code)['my_menu'].items():
+        for k, v in globals()[lang_code]['my_menu'].items():
             builder.button(text=v)
         return builder.as_markup(resize_keyboard=True)
 
@@ -26,7 +26,18 @@ class MyCallbackFactory(CallbackData, prefix="main_callback"):
     async def rate_note_factory() -> ReplyKeyboardMarkup:
         builder = ReplyKeyboardBuilder()
         builder.button(
-            text='😾.',)
+            text='😺.',)
         builder.button(
-            text='⛔.',)
+            text='✏.',)
+        builder.button(
+            text='⛔.', )
         return builder.as_markup(resize_keyboard=True)
+
+    @staticmethod
+    async def generate_answer_for_comment(lang_code: str, note_id: int) -> InlineKeyboardMarkup:
+        builder = InlineKeyboardBuilder()
+        builder.button(
+                text=globals()[lang_code]['answer_comment']['answer'],
+                callback_data=MyCallbackFactory(action="answer_comment", value=str(note_id))
+            )
+        return builder.as_markup()

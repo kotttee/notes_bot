@@ -18,3 +18,7 @@ class Configuration:
     @staticmethod
     def available_languages() -> list:
         return ast.literal_eval(parser.get('languages', 'available'))
+
+    @staticmethod
+    def support_chat_id() -> int:
+        return int(parser.get('bot', 'support_chat_id'))

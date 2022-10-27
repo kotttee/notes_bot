@@ -26,6 +26,8 @@ class Database:
     async def get_notes_filtered(self, note_filter: dict, loop_notes: bool, skip: list):
         while True:
             note = await get_note_filtered_request(note_filter, skip, self.database.notes)
+            if note == "BREAK":
+                break
             if not note:
                 if loop_notes:
                     skip.clear()

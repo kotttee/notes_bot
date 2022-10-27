@@ -4,6 +4,7 @@ uk = {
     'settings': {
         'language': 'language',
         'loop_notes': 'зациклити нотатки',
+        'support': 'підтримка',
         'cancel': '⛔'
     },
     'settings_loop_notes': {
@@ -22,6 +23,7 @@ ru = {
     'settings': {
         'language': 'language',
         'loop_notes': 'зациклить заметки',
+        'support': 'поддержка',
         'cancel': '⛔'
     },
     'settings_loop_notes': {
@@ -41,6 +43,7 @@ en = {
     'settings': {
         'language': 'language',
         'loop_notes': 'loop notes',
+        'support': 'support',
         'cancel': '⛔'
     },
     'settings_loop_notes': {

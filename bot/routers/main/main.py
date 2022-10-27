@@ -45,5 +45,3 @@ async def handle_block(event: ChatMemberUpdated, _user: User):
 async def handle_unblock(event: ChatMemberUpdated, _user: User):
     _user.active = True
     await _user.commit()
-
-

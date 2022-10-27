@@ -28,9 +28,19 @@ class NotesManager:
         return True, 'ok'
 
     @staticmethod
+    async def check_comment(text: str) -> tuple:
+        """returns 'status' and 'description', if everything is ok with the note, then the status will be True,
+        otherwise False and 'description' will contain the reason for the problem"""
+        for word in forbidden_words:
+            if re.search(word, text):
+                return False, 'contains_forbidden_words'
+
+        return True, 'ok'
+
+    @staticmethod
     async def get_note(user, database: Database) -> Note | None:
         note = None
-        async for i, skip in database.get_notes_filtered({'language': user.language}, user.loop_notes, user.looped_notes_skips):
+        async for i, skip in database.get_notes_filtered({'language': user.language}, user.loop_notes, user._notes_skips):
             # here will be more filters soon
             if user.user_id == i['note_id']:
                 skip.append(i['note_id'])
@@ -43,6 +53,9 @@ class NotesManager:
                 if i['note_id'] in skip:
                     continue
             note = Note(i['text'], i['note_id'], i['date'], i['language'], i['showed'], database)
+            if not note.valid:
+                skip.append(i['note_id'])
+                continue
             note.showed.append(user.user_id)
             await note.commit()
             skip.append(i['note_id'])

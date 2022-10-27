@@ -16,9 +16,9 @@ class User:
             self.loop_notes = properties['loop_notes']
             self.language: str = properties['language']
             self.active: bool = properties['active']
-            if user_id not in looped_users_skips.keys():
-                looped_users_skips[user_id] = []
-            self.looped_notes_skips = looped_users_skips[user_id]
+        if user_id not in looped_users_skips.keys():
+            looped_users_skips[user_id] = []
+        self._notes_skips = looped_users_skips[user_id]
 
     @property
     def data(self) -> dict:

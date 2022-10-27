@@ -5,6 +5,9 @@ uk = {
         'watch_notes': '📖.',
         'my_note': '📝.',
         'settings': '⚙.'
+    },
+    'answer_comment': {
+        'answer': 'відповісти',
     }
 }
 
@@ -15,6 +18,9 @@ ru = {
         'my_note': '📝.',
         'settings': '⚙.'
 
+    },
+    'answer_comment': {
+        'answer': 'ответить',
     }
 }
 
@@ -25,5 +31,8 @@ en = {
         'my_note': '📝.',
         'settings': '⚙.'
 
+    },
+    'answer_comment': {
+        'answer': 'answer',
     }
 }
